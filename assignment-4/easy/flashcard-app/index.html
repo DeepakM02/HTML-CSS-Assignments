@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard App</title>
+    <script src="./mockdata.js"></script>
+    <script src="./index.js"></script>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <main id="app">
+        <section id="setup-screen">
+            <select id="select-topic"></select>
+            <!-- <form action=""> -->
+                <input id="question-count" type="number" placeholder="No of Question" />
+                <button id="start-quiz" type="submit" disabled class="btn"  onclick="onStartQuiz()">Start Quiz</button>
+                <div class="error" id="errorMsg"></div>
+            <!-- </form> -->
+
+        </section>
+        <section id="loading-screen" class="hidden"></section>
+        <section id="quiz-screen" class="hidden">
+            <h3 id="question-number"></h3>
+            <div class="card" onclick="flipCard()">
+                <div class="card-inner">
+                    <div id="card-front"></div>
+                    <div id="card-back"></div>
+                </div>
+            </div>
+            <div id="answer-controls" class="hidden" >
+                <h4>Did you get it correct?</h4>
+                <div>
+                <button class="btn correct" onclick="markCorrect()">Yes</button>
+                <button class="btn wrong" onclick="markWrong()">No</button>
+                </div>
+            </div>
+        </section>
+        <section id="result-screen" class="hidden">
+            <div id="result"></div>
+            <button id="start-quiz" class="btn"  onclick="onStartAgain()">Start Again</button>
+        </section>
+    </main>
+</body>
+</html>
