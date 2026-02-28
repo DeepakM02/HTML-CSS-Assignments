@@ -1,6 +1,46 @@
 
 const MIN_QUESTION = 5;
 const MAX_QUESTION = 20;
+const API_BASE = 'https://opentdb.com/api.php?difficulty=easy&type=multiple';
+
+const topics = [
+    { "id": "any", "name": "Any" },
+    { "id": "9", "name": "General Knowledge" },
+    { "id": "10", "name": "Books" },
+    { "id": "11", "name": "Film" },
+    { "id": "12", "name": "Music" },
+    { "id": "13", "name": "Musicals & Theatres" },
+    { "id": "14", "name": "Television" },
+    { "id": "15", "name": "Video Games" },
+    { "id": "16", "name": "Board Games" },
+    { "id": "17", "name": "Science & Nature" },
+    { "id": "18", "name": "Computers" },
+    { "id": "19", "name": "Mathematics" },
+    { "id": "20", "name": "Mythology" },
+    { "id": "21", "name": "Sports" },
+    { "id": "22", "name": "Geography" },
+    { "id": "23", "name": "History" },
+    { "id": "24", "name": "Politics" },
+    { "id": "25", "name": "Art" },
+    { "id": "26", "name": "Celebrities" },
+    { "id": "27", "name": "Animals" },
+    { "id": "28", "name": "Vehicles" },
+    { "id": "29", "name": "Comics" },
+    { "id": "30", "name": "Gadgets" },
+    { "id": "31", "name": "Japanese Anime & Manga" },
+    { "id": "32", "name": "Cartoon & Animations" }
+]
+
+const state = {
+    section: 'setup',
+    topic: null,
+    questions: [],
+    count: 0,
+    score: 0,
+    loading: false,
+    currentIndex: 0,
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const select = document.getElementById("select-topic");
 
@@ -36,62 +76,62 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showError(message) {
         errorMsg.textContent = message;
-        errorMsg.style.display = "block";
+        errorMsg.classList.add("show");
         input.classList.add("invalid");
         submitBtn.disabled = true;
     }
 
     function clearError() {
         errorMsg.textContent = '';
-        errorMsg.style.display = "none";
+        errorMsg.classList.remove("show");
         input.classList.remove("invalid");
         submitBtn.disabled = false;
     }
 });
 
 
+function showError(message) {
+    const errorMsg = document.getElementById("errorMsg");
 
-const state = {
-    section: 'setup',
-    topic: null,
-    questions: [],
-    count: 0,
-    score: 0,
-    loading: false,
-    currentIndex: 0,
+    errorMsg.textContent = message;
+    errorMsg.classList.add("show");
 }
 
-const topics = [
-    { "id": "any", "name": "Any" },
-    { "id": "9", "name": "General Knowledge" },
-    { "id": "10", "name": "Books" },
-    { "id": "11", "name": "Film" },
-    { "id": "12", "name": "Music" },
-    { "id": "13", "name": "Musicals & Theatres" },
-    { "id": "14", "name": "Television" },
-    { "id": "15", "name": "Video Games" },
-    { "id": "16", "name": "Board Games" },
-    { "id": "17", "name": "Science & Nature" },
-    { "id": "18", "name": "Computers" },
-    { "id": "19", "name": "Mathematics" },
-    { "id": "20", "name": "Mythology" },
-    { "id": "21", "name": "Sports" },
-    { "id": "22", "name": "Geography" },
-    { "id": "23", "name": "History" },
-    { "id": "24", "name": "Politics" },
-    { "id": "25", "name": "Art" },
-    { "id": "26", "name": "Celebrities" },
-    { "id": "27", "name": "Animals" },
-    { "id": "28", "name": "Vehicles" },
-    { "id": "29", "name": "Comics" },
-    { "id": "30", "name": "Gadgets" },
-    { "id": "31", "name": "Japanese Anime & Manga" },
-    { "id": "32", "name": "Cartoon & Animations" }
-]
+function clearError() {
+    const errorMsg = document.getElementById("errorMsg");
 
+    errorMsg.textContent = '';
+    errorMsg.classList.remove("show");
+}
+
+// fetching questions and handling errors
 async function fetchQuestions(topicID, count) {
-    // https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple
-    mockData.slice(0, state.count).forEach(result => {
+    let API_URL = `${API_BASE}&amount=${count}`
+
+    if(topicID != 'any') {
+        API_URL += `&category=${topicID}`
+
+    }
+    const response = await fetch(API_URL);
+    try {
+        if (!response.ok) {
+            throw new Error("Server error while fetching data!");
+        }
+        const data = await response.json();
+        if (!data.results || !data.results.length) {
+            throw new Error("No questions found! Try another topic.");
+
+        }
+        transformData(data.results);
+        return true;
+    } catch (error) {
+        showError(error);
+        return false;
+    }
+}
+
+function transformData(questions) {
+    questions.slice(0, state.count).forEach(result => {
         state.questions.push({
             question: result.question,
             answer: result.correct_answer
@@ -99,9 +139,17 @@ async function fetchQuestions(topicID, count) {
     })
 }
 
+// 
+async function onStartQuiz() {
 
-function onStartQuiz() {
-    resetState();
+    // disable submit button if loading screen visible
+    if (state.loading) {
+        const submitBtn = document.getElementById("start-quiz");
+        submitBtn.setAttribute("disabled", true);
+        return;
+    }
+    resetState(); // reset state if case if restart quiz
+
     const selectTopic = document.getElementById("select-topic");
     const questionCount = document.getElementById("question-count");
 
@@ -115,12 +163,17 @@ function onStartQuiz() {
     state.topic = topic;
     state.count = count;
     state.currentIndex = 0;
-    // state.loading = true;
+    state.loading = true;
+    showScreen('loading-screen');
+    const result = await fetchQuestions(topic, count);
+    hideScreen('loading-screen');
+    state.loading = false;
 
-    fetchQuestions(topic, count);
-    state.section = 'quiz';
-    renderQuiz();
-    renderQuestion();
+    if (result) {
+        state.section = 'quiz';
+        renderQuiz();
+        renderQuestion();
+    }
 }
 
 function renderQuiz() {
@@ -146,7 +199,7 @@ function flipCard() {
 
 
     const answer = state.questions[state.currentIndex].answer;
-    document.getElementById("card-back").innerHTML = `<b>Answer:</b> ${answer}`;
+    document.getElementById("card-back").innerHTML = `<b>Answer:</b> &nbsp;${answer}`;
 
     document.getElementById("answer-controls").classList.remove("hidden");
 
