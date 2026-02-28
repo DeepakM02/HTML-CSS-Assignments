@@ -1,0 +1,112 @@
+body {
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px
+}
+
+main {
+    margin: 100px;
+}
+
+select, input {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+select:focus,
+input:focus {
+    outline: none;
+}
+
+.hidden {
+    display:none !important;
+}
+
+.btn {
+    max-width: 100px;
+    width: 100px;
+    margin-top: 10px;
+    background-color: black;
+    padding: 10px 5px;
+    color: white;
+    border-radius: 25px;
+    /* font-size: 15px; */
+    font-weight: 500;
+}
+
+.wrong {
+    background: white;
+    color: black
+}
+
+.card {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px 15px;
+    width: 100%;
+    max-height: 300px;
+    position: relative;
+    background-color: coral;
+
+}
+
+#card-back {
+    margin-top: 10px;
+    transform: rotateY(180deg);
+}
+
+.flip {
+    transform: rotateY(180deg);
+    transform-style: preserve-3d;
+    transition: 1s ease;
+    background-color:yellowgreen;
+}
+
+.flip #card-front {
+    transform: rotateY(180deg);
+}
+
+
+
+#answer-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#result-screen {
+    margin-top: 10px;
+}
+
+#start-quiz:disabled {
+    opacity: 0.6;
+}
+
+.error {
+    display: none;
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.invalid {
+    border: 1px solid red;
+}
+
+#result-screen {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
