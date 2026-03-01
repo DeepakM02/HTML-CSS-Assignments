@@ -27,9 +27,9 @@ const GENRES = [
   const state = {
     movies: [],
     selectedGenre: "",
-    count: 10,
-    currentMovies: []
-  }
+    currentMovies: [],
+    itemsPerPage: 20
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const select = document.getElementById("select-genre");
@@ -48,46 +48,82 @@ document.addEventListener("DOMContentLoaded", function () {
         option.value = genre.id;
         select.appendChild(option);
     });
-});
+})
 
-async function fetchMovies(genre, count = 20) {
-    let API_URL = `${BASE_URL}?api_key=${API_KEY}&with_genres=${genre}&page=${count/10}`
-    const response = await fetch(API_URL);
+async function fetchMovies(genre) {
+    const loader = document.getElementById("loader");
+    const errorContainer = document.getElementById("error-container");
+
+    showScreen('loading-screen');
+    errorContainer.innerHTML = "";
+
     try {
-        if (!response.ok) {
-            throw new Error("Server error while fetching data!");
-        }
-        const data = await response.json();
-        if (!data.results || !data.results.length) {
-            throw new Error("No movie found!");
+        const apiPagesNeeded = Math.ceil(state.itemsPerPage / 20);
+        
+        let allMovies = [];
+        
+        for (let i = 0; i < apiPagesNeeded; i++) {
+            const currentApiPage = i + 1;
+            let API_URL = `${BASE_URL}?api_key=${API_KEY}&with_genres=${genre}&page=${currentApiPage}`;
+            
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error("Server error while fetching data!");
+            }
 
+            const data = await response.json();
+            if (!data.results || !data.results.length) {
+                throw new Error("No movies found for this genre!");
+            }
+
+            allMovies = [...allMovies, ...data.results];
         }
-        state.movies = data.results;
+
+        state.movies = allMovies.slice(0, state.itemsPerPage);
+        
         const checkbox = document.getElementById("sorting-checkbox");
         const checked = checkbox.checked;
         if(checked) {
-            state.currentMovies = [...sortByRating(data.results)];
+            state.currentMovies = [...sortByRating(state.movies)];
         } else {
-            state.currentMovies = data.results;
+            state.currentMovies = state.movies;
         }
         
+        hideScreen('loading-screen');
         return true;
     } catch (error) {
+        hideScreen('loading-screen');
         showError(error);
         return false;
     }
 }
+
+function hideScreen(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+function showScreen(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+
+function showError(error) {
+    const errorContainer = document.getElementById("error-container");
+    const errorMessage = error?.message || "There is an error while fetch movies.";
+    errorContainer.innerHTML = `<div class="error-message">${errorMessage}</div>`;
+    state.currentMovies = [];
+    renderMovies();
+}
+
 async function onSelectGenre(element) {
     const value = element.value;
     state.genre = value;
     onSettingData(value)
 }
 
-async function onSettingData(genre=state.genre, count = state.count) {
-    state.genre = genre;
-    state.count = count;
+async function onSettingData(genre=state.selectedGenre) {
+    state.selectedGenre = genre;
 
-    const response = await fetchMovies(genre, count);
+    const response = await fetchMovies(genre);
     if (!response) {
         return;
     }
@@ -117,28 +153,31 @@ function renderMovies() {
     const movieWrapper = document.getElementById("movie-wrapper");
     movieWrapper.innerHTML = '';
 
+    if(!state.currentMovies || state.currentMovies.length === 0) {
+        movieWrapper.innerHTML = "<p class='empty-state'>No movies found. Please select a genre to get started.</p>";
+        return;
+    }
+
     state.currentMovies.forEach(movie => {
         const divElement = document.createElement("div");
         divElement.className = "movie";
         divElement.innerHTML =
-            `<div class="imageWrapper">
-                            ${movie.vote_average && `<span class="star">⭐ ${Math.floor(movie.vote_average)}/10</span>`}
-            <img class="movie-poster" src=${IMG_URL + movie.poster_path} alt=${movie.title}/>
+            `<div class="movie-image-wrapper">
+                <img class="movie-poster" src=${IMG_URL + movie.poster_path} alt=${movie.title}/>
+                ${movie.vote_average && `<span class="star">⭐ ${Math.floor(movie.vote_average)}/10</span>`}
             </div>
             <div class="movie-footer">
-
-                <h4>${movie.title}</h4>
-                <p>${movie.overview}</p>  
-                
+                <h4 class="movie-title">${movie.title}</h4>
+                <p class="movie-overview">${movie.overview}</p>    
             </div>`
         movieWrapper.appendChild(divElement)
     })
     
 }
 
-function onSelectCount(element) {
-    const value = element.value;
-    state.count = value;
-
-    onSettingData(state.genre, value)
+function onSelectItemsPerPage(element) {
+    const value = parseInt(element.value);
+    state.itemsPerPage = value;
+    
+    onSettingData(state.selectedGenre);
 }
