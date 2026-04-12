@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder</title>
+    <meta name="description" content="Discover delicious meals from around the world" />
+    <script src="./mockdata.js"></script>
+    <script src="./index.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="app">
+        <section id="setup-screen">
+            <h1 class="content-header">Recipe Finder</h1>
+            <select id="select-cusine"></select>
+            <input id="recipe-count" type="number" placeholder="Number of Recipes" min="1" max="10" />
+            <button id="start-search" type="submit" class="btn" onclick="handleClickSearch()">Search</button>
+            <div class="error" id="errorMsg"></div>
+        </section>
+
+        <section id="loading-screen" class="hidden">
+            <div class="spinner"></div>
+            <p>Loading questions...</p>
+        </section>
+
+        <!-- Recipe Showcase -->
+        <section id="recipes-section">
+            <div id="recipes-wrapper"></div>
+        </section>
+    </main>
+</body>
+</html>
