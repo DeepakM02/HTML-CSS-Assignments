@@ -14,7 +14,10 @@ All weekly assignments from the cohort.
 * [Week 9](./Week-09)
 * [Week 10](./Week-10)
 * [Week 11](./Week-11)
-
+* [Week 12](./Week-12)
+* [Week 13](./Week-13)
+* [Week 16](./Week-16)
+* [Week 18](./Week-18)
 ---
 
 
