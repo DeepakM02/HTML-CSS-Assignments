@@ -4,3 +4,8 @@
 // Example Input: num = 15, divisor = 5
 // Example Output: true
 
+function isDivisible(firstNum:number, secondNum:number):boolean {
+    return firstNum % secondNum === 0
+}
+
+// console.log(isDivisible(15, 2));
