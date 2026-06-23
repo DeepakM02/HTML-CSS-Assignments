@@ -4,13 +4,13 @@
 
 // Example Input:
 
-// users = [
-//     { name: "Alice", age: 25, country: "India" },
-//     { name: "Bob", age: 30, country: "USA" },
-//     { name: "Charlie", age: 22, country: "India" },
-//     { name: "David", age: 28, country: "Canada" }
-//   ]
-//   country = "India"
+const users = [
+    { name: "Alice", age: 25, country: "India" },
+    { name: "Bob", age: 30, country: "USA" },
+    { name: "Charlie", age: 22, country: "India" },
+    { name: "David", age: 28, country: "Canada" }
+  ]
+const country = "India"
 
 // Example Output:
 
@@ -19,3 +19,14 @@
 //     { name: "Charlie", age: 22, country: "India" }
 //   ]
 
+export type User = {
+    name: string;
+    age: number;
+    country: string
+}
+
+export function filterUsersByCountry(users: User[], country:string) {
+    return users.filter(user => user.country === country);
+}
+
+// console.log(getUserByCountry(users, country))

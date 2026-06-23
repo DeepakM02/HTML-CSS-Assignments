@@ -17,4 +17,31 @@
 
 // 78.53981633974483
 
+type Circle = {
+    radius: number;
+}
+
+type Rectangle = {
+    width: number;
+    height: number;
+}
+
+export type Shape = Circle | Rectangle;
+
+export function getArea(shape: Shape) : number {
+
+    if('radius' in shape) {
+        return Math.PI * shape.radius ** 2;
+    }
+
+    if('width' in shape && 'height' in shape) {
+        return shape.width * shape.height;
+    }
+
+    throw new Error("object is empty!");
+    
+}
+
+const circle: Shape = { radius: 5 };
+console.log(getArea(circle));
 

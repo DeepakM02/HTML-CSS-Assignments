@@ -3,8 +3,8 @@
 // Example Input: f1 = () => 2, f2 = () => 3
 // Example Output: 6
 
-function multiplyFunctionResults(f1: ()=> number, f2: ()=> number): number {
+export function multiplyResults(f1: ()=> number, f2: ()=> number): number {
     return f1() * f2();
 }
 
-// console.log(multiplyFunctionResults(()=> 4, ()=> 2)); // 8
+// console.log(multiplyResults(()=> 4, ()=> 2)); // 8

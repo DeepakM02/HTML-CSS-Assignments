@@ -4,3 +4,5 @@
 function returnSameType<T>(arg: T):T {
     return arg;
 }
+
+export {returnSameType as identity};

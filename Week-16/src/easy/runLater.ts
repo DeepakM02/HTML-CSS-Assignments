@@ -4,7 +4,7 @@
 // Example Output: Prints "Hello!" after 2 seconds.
 
 
-function runLater(fn: () => void, delay:number):void {
+export function runLater(fn: () => void, delay:number):void {
     setTimeout(()=> fn(), delay);
 }
 
