@@ -12,3 +12,29 @@
 // Example Output:
 // "You have selected a window seat."
 
+
+export const SeatPosition = {
+  Window: "window",
+  Middle: "middle",
+  Aisle: "aisle",
+} as const;
+
+export type SeatPosition =
+  typeof SeatPosition[keyof typeof SeatPosition];
+
+
+export function getSeatDescription(input: SeatPosition):string {
+    switch (input) {
+        case SeatPosition.Window:
+            return `You have selected a ${input} seat.`
+        case SeatPosition.Middle:
+            return `You have selected a ${input} seat.`
+        case SeatPosition.Aisle:
+            return `You have selected an ${input} seat.`
+        default:
+            throw new Error("Invalid seat position")
+    }
+    
+}
+
+// console.log(getSeatDescription(SeatPosition.Window))

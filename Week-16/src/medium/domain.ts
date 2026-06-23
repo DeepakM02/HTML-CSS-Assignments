@@ -4,13 +4,26 @@
 // The function should return true if the domain matches and false otherwise.
 
 // Example Input:
-// const user = {
-//     firstName: "John",
-//     lastName: "Doe",
-//     email: "john.doe@example.com",
-//     age: 25
-//   };
-//   const allowedDomain = "@example.com";
+const user = {
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    age: 25
+  };
+  const allowedDomain = "@example.com";
 // Example Output:
 // true
 
+
+// Solution
+export interface User {
+    firstName: string;
+    lastName: string;
+    email: string;
+    age: number;
+}
+
+export function isAllowedDomain(user:User, domain: string):boolean {
+    return user.email.endsWith(domain)
+}
+console.log(isAllowedDomain(user, allowedDomain));
